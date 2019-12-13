@@ -22,7 +22,8 @@ TOKEN = Config.get_token()
 if __name__ == '__main__':
 	logging.info("Selected mode " + MODE)
 	if MODE == "debug":
-		bot.polling()
 		bot.remove_webhook()
+		bot.polling()
 	else:
-		bot.set_webhook(Config.get_url() + TOKEN)
+		# bot.set_webhook(Config.get_url() + TOKEN)
+		bot.polling()
