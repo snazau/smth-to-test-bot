@@ -105,3 +105,6 @@ venv.bak/
 
 # ide settings
 .idea
+
+# token file
+*.token
