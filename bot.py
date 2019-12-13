@@ -14,10 +14,11 @@ bot = telebot.TeleBot(Config.BOT_TOKEN)
                    'migrate_to_chat_id', 'migrate_from_chat_id',
                    'pinned_message'])
 def sending_auto2(message):
-    bot.send_message(chat_id=message.chat.id, text=autosending_text(bot, message), disable_web_page_preview=True) 
+    bot.send_message(chat_id=message.chat.id, text=autosending_text(bot, message), disable_web_page_preview=True)
 
 if Config.MODE == "PROD":
 	logger.debug("Config.MODE =", Config.MODE)
+
 if __name__ == '__main__':
 	logging.debug("Config.MODE", Config.MODE)
-    bot.polling()  # Заставляет бота получать уведомления о новых сообщениях
+	bot.polling()  # Заставляет бота получать уведомления о новых сообщениях
