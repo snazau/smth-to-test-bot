@@ -16,7 +16,7 @@ bot = telebot.TeleBot(Config.BOT_TOKEN)
 def sending_auto2(message):
     bot.send_message(chat_id=message.chat.id, text=autosending_text(bot, message), disable_web_page_preview=True) 
 
-if Config.MODE == PROD:
+if Config.MODE == "PROD":
 	logger.debug("Config.MODE =", Config.MODE)
 if __name__ == '__main__':
 	logging.debug("Config.MODE", Config.MODE)
