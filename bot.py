@@ -1,6 +1,7 @@
 import telebot
 import logging
 from config import *
+from flask import Flask, request
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger()
@@ -19,11 +20,40 @@ def answer_smth(message):
 MODE = Config.get_mode()
 TOKEN = Config.get_token()
 
-if __name__ == '__main__':
-	logging.info("Selected mode " + MODE)
-	if MODE == "debug":
-		bot.remove_webhook()
-		bot.polling()
-	else:
-		# bot.set_webhook(Config.get_url() + TOKEN)
-		bot.polling()
+server = Flask(__name__)
+
+
+@bot.message_handler(commands=['start'])
+def start(message):
+    bot.reply_to(message, 'Hello, ' + message.from_user.first_name)
+
+
+@bot.message_handler(func=lambda message: True, content_types=['text'])
+def echo_message(message):
+    bot.reply_to(message, message.text)
+
+
+@server.route('/' + TOKEN, methods=['POST'])
+def getMessage():
+    bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
+    return "!", 200
+
+
+@server.route("/")
+def webhook():
+    bot.remove_webhook()
+    bot.set_webhook(url='https://smth-to-test-bot.herokuapp.com/' + TOKEN)
+    return "!", 200
+
+
+if __name__ == "__main__":
+    server.run(host="0.0.0.0", port=int(os.environ.get('PORT', 8443)))
+
+# if __name__ == '__main__':
+# 	logging.info("Selected mode " + MODE)
+# 	if MODE == "debug":
+# 		bot.remove_webhook()
+# 		bot.polling()
+# 	else:
+# 		# bot.set_webhook(Config.get_url() + TOKEN)
+# 		bot.polling()
