@@ -45,7 +45,7 @@ def reply_to_message(message):
 @server.route('/' + TOKEN, methods=['POST'])
 def getMessage():
 	logging.info("KEKEKE @server.route('/' + TOKEN, methods=['POST'])")
-	logging.info("type:" + type([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))]))
+	logging.info("type:" + str(type([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])))
 	logging.info("smth" + [telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
 	bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
 	return "!", 200
