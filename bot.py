@@ -12,7 +12,6 @@ TOKEN = Config.BOT_TOKEN
 URL = Config.URL
 
 bot = telebot.TeleBot(TOKEN)
-server = Flask(__name__)
 
 @bot.message_handler(
     content_types=['text', 'audio', 'document', 'photo', 'sticker', 'video', 'video_note', 'voice', 'location',
@@ -23,18 +22,25 @@ server = Flask(__name__)
 def answer_smth(message):
     bot.send_message(chat_id=message.chat.id, text=autosending_text(bot, message), disable_web_page_preview=True)
 
-@server.route('/' + TOKEN, methods=['POST'])
-def getMessage():
-	logging.info("KEKEKE @server.route('/' + TOKEN, methods=['POST'])")
-	bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
-	return "!", 200
+def init_server():
+	server = Flask(__name__)
 
-@server.route("/")
-def webhook():
-	logging.info('KEKEKE @server.route("/")')
-	bot.remove_webhook()
-	bot.set_webhook(url=URL + TOKEN)
-	return "!", 200
+	# Инициализирует webhook
+	@server.route("/")
+	def webhook():
+		logging.info('KEKEKE @server.route("/")')
+		bot.remove_webhook()
+		bot.set_webhook(url=URL + TOKEN)
+		return "!", 200
+
+	# чета
+	@server.route('/' + TOKEN, methods=['POST'])
+	def getMessage():
+		logging.info("KEKEKE @server.route('/' + TOKEN, methods=['POST'])")
+		bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
+		return "!", 200
+
+	return server
 
 if __name__ == '__main__':
 	logging.info("Selected mode " + MODE)
@@ -42,4 +48,5 @@ if __name__ == '__main__':
 		bot.remove_webhook()
 		bot.polling()
 	else:
+		server = init_server()
 		server.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))

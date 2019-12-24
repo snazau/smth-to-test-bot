@@ -10,5 +10,5 @@ class Config:
 
 def autosending_text(bot, message):
     first_name = bot.get_chat(message.chat.id).first_name
-    text = "Hello, {0}".format(first_name)
+    text = "Hello kek, {0}".format(first_name)
     return text
