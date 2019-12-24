@@ -9,6 +9,9 @@ logger = logging.getLogger()
 MODE = Config.MODE
 TOKEN = Config.BOT_TOKEN
 URL = Config.URL
+logging.info(MODE)
+logging.info(TOKEN)
+logging.info(URL)
 
 bot = telebot.TeleBot(TOKEN)
 server = Flask(__name__)
