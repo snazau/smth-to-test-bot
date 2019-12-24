@@ -39,7 +39,7 @@ def send_info(message):
 def reply_to_message(message):
 	if 'hello'in message.text.lower():
 		sendMessage(message, 'Hello! How are you doing today?')
-	else
+	else:
 		sendMessage(message, "type smth withj hello word")
 
 @server.route('/' + TOKEN, methods=['POST'])
