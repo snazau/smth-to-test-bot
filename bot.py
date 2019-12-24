@@ -6,48 +6,79 @@ from flask import Flask, request
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger()
 
-bot = telebot.TeleBot(Config.get_token())
-
-@bot.message_handler(
-    content_types=['text', 'audio', 'document', 'photo', 'sticker', 'video', 'video_note', 'voice', 'location',
-                   'contact', 'new_chat_members', 'left_chat_member', 'new_chat_title', 'new_chat_photo',
-                   'delete_chat_photo', 'group_chat_created', 'supergroup_chat_created', 'channel_chat_created',
-                   'migrate_to_chat_id', 'migrate_from_chat_id',
-                   'pinned_message'])
-def answer_smth(message):
-    bot.send_message(chat_id=message.chat.id, text=autosending_text(bot, message), disable_web_page_preview=True)
-
 MODE = Config.get_mode()
 TOKEN = Config.get_token()
 
+bot = telebot.TeleBot(TOKEN)
+
+# @bot.message_handler(
+#     content_types=['text', 'audio', 'document', 'photo', 'sticker', 'video', 'video_note', 'voice', 'location',
+#                    'contact', 'new_chat_members', 'left_chat_member', 'new_chat_title', 'new_chat_photo',
+#                    'delete_chat_photo', 'group_chat_created', 'supergroup_chat_created', 'channel_chat_created',
+#                    'migrate_to_chat_id', 'migrate_from_chat_id',
+#                    'pinned_message'])
+# def answer_smth(message):
+#     bot.send_message(chat_id=message.chat.id, text=autosending_text(bot, message), disable_web_page_preview=True)
+
 server = Flask(__name__)
 
+def sendMessage(message, text):
+	bot.send_message(message.chat.id, text)
 
+# This method will send a message formatted in HTML to the user whenever it starts the bot with the /start command, feel free to add as many commands' handlers as you want
 @bot.message_handler(commands=['start'])
-def start(message):
-    bot.reply_to(message, 'Hello, ' + message.from_user.first_name)
+def send_info(message):
+	text = (
+	"<b>Welcome to the Medium 🤖!</b>\n"
+	"Say Hello to the bot to get a reply from it!"
+	)
+	bot.send_message(message.chat.id, text, parse_mode='HTML')
+# This method will fire whenever the bot receives a message from a user, it will check that there is actually a not empty string in it and, in this case, it will check if there is the 'hello' word in it, if so it will reply with the message we defined
 
-
-@bot.message_handler(func=lambda message: True, content_types=['text'])
-def echo_message(message):
-    bot.reply_to(message, message.text)
-
+@bot.message_handler(func=lambda msg: msg.text is not None)
+def reply_to_message(message):
+	if 'hello'in message.text.lower():
+		sendMessage(message, 'Hello! How are you doing today?')
+	else
+		sendMessage(message, "type smth withj hello word")
 
 @server.route('/' + TOKEN, methods=['POST'])
 def getMessage():
-    bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
-    return "!", 200
-
+	bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
+	return "!", 200
 
 @server.route("/")
 def webhook():
-    bot.remove_webhook()
-    bot.set_webhook(url='https://smth-to-test-bot.herokuapp.com/' + TOKEN)
-    return "!", 200
+	bot.remove_webhook()
+	bot.set_webhook(url='https://smth-to-test-bot.herokuapp.com/' + TOKEN)
+	return "!", 200
+
+
+# @bot.message_handler(commands=['start'])
+# def start(message):
+#     bot.reply_to(message, 'Hello, ' + message.from_user.first_name)
+
+
+# @bot.message_handler(func=lambda message: True, content_types=['text'])
+# def echo_message(message):
+#     bot.reply_to(message, message.text)
+
+
+# @server.route('/' + TOKEN, methods=['POST'])
+# def getMessage():
+#     bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
+#     return "!", 200
+
+
+# @server.route("/")
+# def webhook():
+#     bot.remove_webhook()
+#     bot.set_webhook(url='https://smth-to-test-bot.herokuapp.com/' + TOKEN)
+#     return "!", 200
 
 
 if __name__ == "__main__":
-    server.run(host="0.0.0.0", port=int(os.environ.get('PORT', 8443)))
+	server.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))
 
 # if __name__ == '__main__':
 # 	logging.info("Selected mode " + MODE)
